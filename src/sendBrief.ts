@@ -24,13 +24,55 @@ const PROJECTS_PATH = resolve(__dirname, '..', 'projects.json');
 const DEFAULT_SYMBOLS = ['NVDA', 'MSFT', 'GOOGL', 'META', 'AMZN', 'AMD', 'SMCI', 'ARM', 'PLTR', 'TSM'];
 
 // ===== カレンダー =====
-function createAuthClient(tokenPath: string): OAuth2Client {
+/** refresh_token から新しい access_token を取得 */
+async function refreshAccessToken(token: {
+  refresh_token: string;
+  client_id?: string;
+  client_secret?: string;
+}): Promise<string> {
+  const clientId = token.client_id || process.env.GOOGLE_CLIENT_ID;
+  const clientSecret = token.client_secret || process.env.GOOGLE_CLIENT_SECRET;
+
+  const resp = await fetch('https://oauth2.googleapis.com/token', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      client_id: clientId!,
+      client_secret: clientSecret!,
+      refresh_token: token.refresh_token,
+      grant_type: 'refresh_token',
+    }),
+  });
+
+  if (!resp.ok) {
+    const body = await resp.text();
+    throw new Error(`Token refresh failed: ${resp.status} ${body}`);
+  }
+
+  const data = await resp.json();
+  return data.access_token;
+}
+
+async function createAuthClient(tokenPath: string): Promise<OAuth2Client> {
   const client = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
     process.env.GOOGLE_REDIRECT_URI || 'http://localhost:3000/oauth2callback',
   );
   const token = JSON.parse(readFileSync(tokenPath, 'utf-8'));
+
+  // refresh_token を使って常に新しい access_token を取得
+  if (token.refresh_token) {
+    try {
+      const newAccessToken = await refreshAccessToken(token);
+      token.access_token = newAccessToken;
+      token.token = newAccessToken;
+      console.log(`🔄 トークンリフレッシュ成功 (${tokenPath.split('/').pop()})`);
+    } catch (err) {
+      console.error(`⚠️ トークンリフレッシュ失敗、既存トークンで試行:`, err);
+    }
+  }
+
   client.setCredentials(token);
   return client;
 }
@@ -44,7 +86,7 @@ async function fetchCalendarEvents(
   if (!existsSync(tokenPath)) return [];
 
   try {
-    const auth = createAuthClient(tokenPath);
+    const auth = await createAuthClient(tokenPath);
     const calendar = google.calendar({ version: 'v3', auth });
     const response = await calendar.events.list({
       calendarId: 'primary',
