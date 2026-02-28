@@ -38,8 +38,6 @@ function formatTaskMessage(task: Task, index: number, total: number): string {
     msg += `  • ${action}\n`;
   }
 
-  msg += `\n❓ **どうしますか？** （着手 / スキップ / 後回し / 詳細）`;
-
   return msg;
 }
 

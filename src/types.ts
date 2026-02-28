@@ -50,6 +50,26 @@ export interface BriefingMessage {
   formattedText: string;
 }
 
+/** タスクの状態 */
+export type TaskStatus = 'pending' | 'in_progress' | 'done' | 'postponed';
+
+/** タスク状態管理（tasks.json用） */
+export interface TaskState {
+  id: string;
+  summary: string;
+  source: 'calendar' | 'routine';
+  category: string;
+  priority: string;
+  status: TaskStatus;
+  deadline: string;
+  estimatedMinutes: number;
+  createdAt: string;
+  updatedAt: string;
+  notes?: string;
+  /** ボタン押下時にメッセージ編集するためのDiscordメッセージID */
+  discordMessageId?: string;
+}
+
 /** 株式銘柄データ */
 export interface StockData {
   symbol: string;

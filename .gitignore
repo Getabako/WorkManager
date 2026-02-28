@@ -1,0 +1,8 @@
+node_modules/
+.env
+calendar_token.json
+calendar_token_secondary.json
+dist/
+*.js.map
+.DS_Store
+__pycache__/

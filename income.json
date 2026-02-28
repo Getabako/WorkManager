@@ -1,0 +1,109 @@
+{
+  "target": 500000,
+  "currency": "JPY",
+  "businesses": [
+    {
+      "name": "if(塾)",
+      "type": "monthly",
+      "unit": "per_student",
+      "unitPrice": 11000,
+      "currentStudents": 9,
+      "monthlyRevenue": 99000,
+      "notes": "生徒数×11,000円"
+    },
+    {
+      "name": "ハートアップ",
+      "type": "monthly",
+      "monthlyRevenue": 110000,
+      "notes": "毎月勉強会+ミーティング"
+    },
+    {
+      "name": "黒子ケアラボ",
+      "type": "monthly",
+      "monthlyRevenue": 33000,
+      "notes": "毎月勉強会"
+    },
+    {
+      "name": "なるテック",
+      "type": "monthly",
+      "monthlyRevenue": 0,
+      "notes": "利益未発生。社員2名がこちらの仕事を手伝う形。研修資料・ビジネス方向性共有が必要"
+    },
+    {
+      "name": "クラーク",
+      "type": "hourly",
+      "hourlyRate": 3000,
+      "monthlyHours": 18,
+      "monthlyRevenue": 54000,
+      "notes": "時給3,000円。週1×4h=月16-20h。長期休みは減る。平均18hで計算"
+    },
+    {
+      "name": "GPTs研究会",
+      "type": "monthly",
+      "monthlyRevenue": 0,
+      "notes": "毎週水曜ライブ配信。収益なし。高崎さんとビジネス検討+情報発信の場"
+    },
+    {
+      "name": "株式投資",
+      "type": "variable",
+      "monthlyRevenue": null,
+      "notes": "含み益あり（NVDA +1041%等）。利確時に収入計上。別途管理"
+    },
+    {
+      "name": "LINEアプリ開発案件A",
+      "type": "one-time",
+      "monthlyRevenue": 300000,
+      "month": "2026-02",
+      "notes": "単発案件"
+    },
+    {
+      "name": "LINEアプリ開発案件B",
+      "type": "one-time",
+      "monthlyRevenue": 200000,
+      "month": "2026-02",
+      "notes": "単発案件"
+    }
+  ],
+  "updatedAt": "2026-02-16",
+  "kpi": {
+    "targets": [
+      {
+        "name": "塾への入塾者数",
+        "current": 9,
+        "target": null,
+        "notes": "現在9名"
+      },
+      {
+        "name": "AI導入顧問先企業数",
+        "current": 0,
+        "target": null,
+        "notes": "なるテック経由で開拓"
+      },
+      {
+        "name": "AIシステム開発案件数",
+        "current": 2,
+        "target": null,
+        "notes": "2月はLINEアプリ2件"
+      },
+      {
+        "name": "システム運用管理顧問先企業数",
+        "current": 0,
+        "target": null,
+        "notes": "新規開拓"
+      }
+    ],
+    "marketing_tools": [
+      "DailyInstagramWorkFlow (~/Desktop/ifJukuManager/WorkFrow/DailyInstagramWorkFlow/)",
+      "Facebook投稿（手動、投稿案はAIで作成）",
+      "ブログ記事（DailyInstagramWorkFlowで生成可能）"
+    ],
+    "strategy": "売上が月50万未達の場合、Instagram・ブログでの集客投稿を積極的に行う"
+  },
+  "monthly": [
+    {
+      "name": "島田さんAI講座",
+      "amount": 33000,
+      "category": "consulting"
+    }
+  ]
+}

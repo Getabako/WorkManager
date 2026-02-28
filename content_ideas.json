@@ -1,0 +1,74 @@
+{
+  "strategy": {
+    "target_audiences": [
+      "開発案件を探している企業・個人",
+      "AI導入を検討している企業",
+      "助成金でAI研修をしたい企業",
+      "プログラミングを学びたい子ども・保護者",
+      "心理教育・療育に関心のある事業者"
+    ],
+    "growth_priorities": [
+      "LINEアプリ・AIシステム開発案件の獲得",
+      "助成金活用AI研修の提案先拡大",
+      "定期AIコンサル・心理教育相談の契約増",
+      "if(塾)の入塾者数増加"
+    ],
+    "tone": "翔太は事実をストレートに言うタイプ。宣伝的な大げさ表現が苦手。AIが適度に盛って、でも嘘にならない範囲でキャッチーにする。実績ベース・事例ベースの発信が翔太に合う。",
+    "format_preferences": [
+      "Instagram: DailyInstagramWorkFlowで自動生成",
+      "ブログ: 同ツールで記事生成",
+      "Facebook: 投稿文面をAIが作成、翔太がコピペ投稿"
+    ]
+  },
+  "stock": [
+    {
+      "theme": "療育現場でAI活用して支援計画を自動生成してる話",
+      "source_project": "HeartUpApp",
+      "angle": "実際に現場で使ってるAIツールの話。計画書が数分で出る。",
+      "audience": "療育・福祉事業者"
+    },
+    {
+      "theme": "LINEミニアプリで地方ビジネスのDXやってる話",
+      "source_project": "LINEMiniApp系",
+      "angle": "LINE上で予約・チェックイン・決済まで完結。導入事例。",
+      "audience": "小規模事業者・ジム・店舗"
+    },
+    {
+      "theme": "AIで毎日Instagram投稿を完全自動化した話",
+      "source_project": "DailyInstagramWorkFlow",
+      "angle": "手動ゼロ。カルーセル+リール動画を毎日2回自動投稿。",
+      "audience": "SNS運用に困ってる事業者"
+    },
+    {
+      "theme": "プログラミング塾を生徒と一緒に運営してる話",
+      "source_project": "if(塾)",
+      "angle": "塾長は生徒。自走する塾の仕組み。",
+      "audience": "プログラミング教育に興味ある保護者"
+    },
+    {
+      "theme": "AIが毎日株式分析レポートを自動生成してくれる仕組み",
+      "source_project": "株式投資君",
+      "angle": "GitHub Actions + Geminiで完全自動。個人投資家向け。",
+      "audience": "投資に興味ある層・AI活用に興味ある層"
+    },
+    {
+      "theme": "AI秘書に仕事を全部管理させてる話",
+      "source_project": "AI秘書（WorkManager）",
+      "angle": "タスク管理、カレンダー、収入管理、株レポまでAIが一元管理。",
+      "audience": "フリーランス・個人事業主"
+    },
+    {
+      "theme": "助成金を活用したAI研修プログラム",
+      "source_project": "なるテック",
+      "angle": "企業のAI導入をサポート。助成金で研修費用をカバー。",
+      "audience": "AI導入を検討している中小企業"
+    },
+    {
+      "theme": "発達支援×心理学の勉強会シリーズ",
+      "source_project": "黒子ケアラボ",
+      "angle": "ペアレントトレーニング、ABC分析など実践的な内容。",
+      "audience": "療育・教育関係者・保護者"
+    }
+  ],
+  "updatedAt": "2026-02-16"
+}

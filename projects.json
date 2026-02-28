@@ -1,0 +1,316 @@
+{
+  "projects": [
+    {
+      "name": "HeartUpApp",
+      "client": "ハートアップ（岡本陸佑さん等）",
+      "category": "サッカー療育",
+      "status": "運用中・修正対応中",
+      "path": "~/Desktop/ifJukuManager/他事業/HeartUP/HeartUpApp",
+      "description": "サッカー療育事業の管理アプリ。計画書作成、アセスメント、印刷機能等。Gemini API連携。",
+      "tech": [
+        "HTML/JS",
+        "Node.js",
+        "Gemini API",
+        "Google Drive API"
+      ],
+      "content_angles": [
+        "療育×テクノロジーの実例",
+        "AIを使った支援計画の自動生成",
+        "現場の業務効率化"
+      ]
+    },
+    {
+      "name": "LINEチェックインアプリ (gym-checkin)",
+      "client": null,
+      "category": "LINEMiniApp",
+      "status": "開発中（Stripe連携待ち）",
+      "path": "~/Desktop/ifJukuManager/LINEMiniApp/gym-checkin",
+      "description": "ジム向けLINEミニアプリ。チェックイン+決済機能。",
+      "tech": [
+        "LINE Mini App",
+        "Stripe",
+        "Next.js"
+      ],
+      "content_angles": [
+        "LINE活用のDX事例",
+        "小規模ジムの運営効率化"
+      ]
+    },
+    {
+      "name": "門脇商店アバター",
+      "client": "門脇商店",
+      "category": "開発案件",
+      "status": "要件定義中",
+      "path": null,
+      "description": "アバター関連の開発案件。要件定義書作成中。",
+      "tech": [],
+      "content_angles": [
+        "地方企業のDX",
+        "アバター活用事例"
+      ]
+    },
+    {
+      "name": "Kitazuna",
+      "client": null,
+      "category": "自社開発",
+      "status": "継続開発中",
+      "path": null,
+      "description": "継続的に開発しているプロジェクト。",
+      "tech": [],
+      "content_angles": []
+    },
+    {
+      "name": "DailyInstagramWorkFlow",
+      "client": "if(塾)",
+      "category": "自動化ツール",
+      "status": "運用中",
+      "path": "~/Desktop/ifJukuManager/WorkFrow/DailyInstagramWorkFlow",
+      "description": "Instagram自動投稿システム。カルーセル+リール動画を自動生成。GitHub Actions。",
+      "tech": [
+        "TypeScript",
+        "Gemini AI",
+        "Remotion",
+        "Instagram Graph API"
+      ],
+      "content_angles": [
+        "SNS運用の完全自動化",
+        "AIで毎日コンテンツ生成",
+        "プログラミング塾の集客術"
+      ]
+    },
+    {
+      "name": "SlideMovie WorkFlow",
+      "client": null,
+      "category": "自動化ツール",
+      "status": "運用中",
+      "path": "~/Desktop/ifJukuManager/SlideMovie_WorkFlow-main",
+      "description": "テキスト→スライド→動画の自動生成ワークフロー。",
+      "tech": [
+        "Google Slides API",
+        "TTS",
+        "ffmpeg"
+      ],
+      "content_angles": [
+        "講座資料の自動生成",
+        "動画コンテンツの量産"
+      ]
+    },
+    {
+      "name": "株式投資君",
+      "client": null,
+      "category": "自動化ツール",
+      "status": "運用中",
+      "path": null,
+      "description": "GitHub Actions + Geminiで毎日自動実行される株式分析レポート。Discord配信。",
+      "tech": [
+        "GitHub Actions",
+        "Gemini AI",
+        "Discord Webhook"
+      ],
+      "content_angles": [
+        "AIによる投資分析の自動化",
+        "個人投資家のためのAI活用"
+      ]
+    },
+    {
+      "name": "LINEアプリ開発案件A",
+      "client": null,
+      "category": "受託開発",
+      "status": "進行中",
+      "path": null,
+      "description": "2月の受託案件。30万円。",
+      "tech": [
+        "LINE"
+      ],
+      "revenue": 300000
+    },
+    {
+      "name": "LINEアプリ開発案件B",
+      "client": null,
+      "category": "受託開発",
+      "status": "進行中",
+      "path": null,
+      "description": "2月の受託案件。20万円。",
+      "tech": [
+        "LINE"
+      ],
+      "revenue": 200000
+    },
+    {
+      "name": "AI秘書（WorkManager）",
+      "client": null,
+      "category": "自社開発",
+      "status": "運用中・改善中",
+      "path": "~/Desktop/ifJukuManager/仕事管理",
+      "description": "OpenClaw + Discord連携のAI秘書。タスク管理、カレンダー連携、株式レポート、収入管理。",
+      "tech": [
+        "OpenClaw",
+        "Discord",
+        "Google Calendar API",
+        "Python"
+      ],
+      "content_angles": [
+        "AIアシスタントで仕事を完全管理",
+        "フリーランスの業務自動化"
+      ]
+    },
+    {
+      "name": "LINEIvent",
+      "github": "https://github.com/Getabako/LINEIvent",
+      "category": "LINEMiniApp",
+      "status": "開発中",
+      "tech": [
+        "TypeScript"
+      ],
+      "description": "LINEイベント管理アプリ",
+      "lastUpdated": "2026-02-13",
+      "content_angles": [
+        "LINEでイベント管理のDX"
+      ]
+    },
+    {
+      "name": "AIQuest",
+      "github": "https://github.com/Getabako/AIQuest",
+      "category": "自社開発",
+      "status": "開発中",
+      "tech": [
+        "JavaScript"
+      ],
+      "description": "AI関連プロジェクト",
+      "lastUpdated": "2026-02-06",
+      "content_angles": [
+        "AI活用の教育コンテンツ"
+      ]
+    },
+    {
+      "name": "e-Bridge",
+      "github": "https://github.com/Getabako/e-Bridge",
+      "category": "自社開発",
+      "status": "開発中",
+      "tech": [
+        "JavaScript"
+      ],
+      "description": "",
+      "lastUpdated": "2026-02-03",
+      "content_angles": []
+    },
+    {
+      "name": "gaokagai",
+      "github": "https://github.com/Getabako/gaokagai",
+      "category": "開発案件",
+      "status": "運用中",
+      "tech": [
+        "HTML"
+      ],
+      "description": "門脇商店関連",
+      "lastUpdated": "2026-01-26",
+      "content_angles": [
+        "地方企業のWeb活用"
+      ]
+    },
+    {
+      "name": "pdf2png",
+      "github": "https://github.com/Getabako/pdf2png",
+      "category": "ツール",
+      "status": "完成",
+      "tech": [
+        "HTML"
+      ],
+      "description": "PDF→PNG変換ツール",
+      "lastUpdated": "2026-01-22",
+      "content_angles": [
+        "業務効率化ツール"
+      ]
+    },
+    {
+      "name": "myRingApp",
+      "github": "https://github.com/Getabako/myRingApp",
+      "category": "自社開発",
+      "status": "開発中",
+      "tech": [
+        "TypeScript"
+      ],
+      "description": "",
+      "lastUpdated": "2026-01-04",
+      "content_angles": []
+    },
+    {
+      "name": "mykey",
+      "github": "https://github.com/Getabako/mykey",
+      "category": "LINEMiniApp",
+      "status": "運用中",
+      "tech": [
+        "TypeScript"
+      ],
+      "description": "",
+      "lastUpdated": "2025-12-25",
+      "content_angles": []
+    },
+    {
+      "name": "if-juku",
+      "github": "https://github.com/Getabako/if-juku",
+      "category": "WebSite",
+      "status": "運用中",
+      "tech": [
+        "HTML"
+      ],
+      "description": "if(塾)公式サイト",
+      "lastUpdated": "2025-12-20",
+      "content_angles": [
+        "プログラミング塾の運営"
+      ]
+    },
+    {
+      "name": "if-tech",
+      "github": "https://github.com/Getabako/if-tech",
+      "category": "WebSite",
+      "status": "運用中",
+      "tech": [
+        "HTML"
+      ],
+      "description": "",
+      "lastUpdated": "2025-12-10",
+      "content_angles": []
+    },
+    {
+      "name": "BUNME",
+      "github": "https://github.com/Getabako/BUNME",
+      "category": "自社開発",
+      "status": "開発中",
+      "tech": [
+        "HTML"
+      ],
+      "description": "",
+      "lastUpdated": "2025-11-24",
+      "content_angles": []
+    },
+    {
+      "name": "if-ai",
+      "github": "https://github.com/Getabako/if-ai",
+      "category": "WebSite",
+      "status": "運用中",
+      "tech": [
+        "HTML"
+      ],
+      "description": "AI関連サイト",
+      "lastUpdated": "2025-11-11",
+      "content_angles": [
+        "AI教育"
+      ]
+    },
+    {
+      "name": "rashid",
+      "github": "https://github.com/Getabako/rashid",
+      "category": "開発案件",
+      "status": "完成",
+      "tech": [
+        "HTML"
+      ],
+      "description": "",
+      "lastUpdated": "2025-08-09",
+      "content_angles": []
+    }
+  ],
+  "updatedAt": "2026-02-16",
+  "github": "https://github.com/Getabako"
+}

@@ -1,0 +1,53 @@
+{
+  "rules": {
+    "noRepeatWindowDays": 14,
+    "channels": [
+      "if-juku-blog",
+      "if-business-blog",
+      "instagram-ifjuku"
+    ],
+    "requiredBeforeProposal": [
+      "check_latest_instagram_posts",
+      "check_recent_blog_posts",
+      "compare_with_history"
+    ]
+  },
+  "posts": [
+    {
+      "date": "2026-02-26",
+      "channel": "if-juku-blog",
+      "theme": "YouTubeは入口、講座で一人ひとりに合わせて理解を落とし込む学び方（ゲーム制作/YouTube制作）",
+      "source": "https://if-juku.net/posts/5808_YouTubeは入口_講座で一人ひとりに合わせて理解を落とし込む学び方.html"
+    },
+    {
+      "date": "2026-02-26",
+      "channel": "instagram-ifjuku",
+      "theme": "YouTubeは入口、講座でできるに変える（クリエイティブ学習）",
+      "source": "https://images.if-juku.net/blog/ifjuku-creative-20260226/ifjuku_creative_1.png"
+    },
+    {
+      "date": "2026-02-26",
+      "channel": "if-business-blog",
+      "theme": "YouTube視聴で終わらせない業務実装型AI研修",
+      "source": "service.if-juku.net/blog-post.html?slug=youtube-to-practical-ops-training"
+    },
+    {
+      "date": "2026-02-25",
+      "channel": "instagram-ifjuku",
+      "theme": "AI秘書で毎朝の意思決定を固定化",
+      "source": "service.if-juku.net/blog-post.html?slug=ai-secretary-morning-decision-ops"
+    },
+    {
+      "date": "2026-02-25",
+      "channel": "if-business-blog",
+      "theme": "AI秘書で毎朝の意思決定を固定化する運用",
+      "source": "service.if-juku.net/blog-post.html?slug=ai-secretary-morning-decision-ops"
+    },
+    {
+      "date": "2026-02-25",
+      "channel": "if-juku-blog",
+      "theme": "やる気がない子でも前に進める超細分化タスク設計",
+      "source": "if-juku.net/posts/5807_やる気がない子でも前に進める超細分化タスク設計.html"
+    }
+  ]
+}

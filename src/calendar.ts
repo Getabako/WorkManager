@@ -7,9 +7,15 @@ import { resolve } from 'path';
 import dotenv from 'dotenv';
 import type { CalendarEvent } from './types.js';
 
-dotenv.config();
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-const TOKEN_PATH = resolve(import.meta.dirname, '..', 'calendar_token.json');
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+dotenv.config({ path: resolve(__dirname, '..', '.env') });
+
+const TOKEN_PATH = resolve(__dirname, '..', 'calendar_token.json');
 
 /** OAuth2クライアントを作成 */
 function createOAuth2Client(): OAuth2Client {
