@@ -168,6 +168,29 @@ function loadActiveProjects(): string {
   }
 }
 
+const POST_HISTORY_PATH = resolve(__dirname, '..', 'content_post_history.json');
+
+function loadPostHistory(): string {
+  if (!existsSync(POST_HISTORY_PATH)) return 'なし';
+  try {
+    const data = JSON.parse(readFileSync(POST_HISTORY_PATH, 'utf-8'));
+    const posts = data.posts || [];
+    if (posts.length === 0) return 'なし';
+    const channels = data.rules?.channels || [];
+    const recent = posts.slice(0, 10);
+    let text = `配信チャンネル: ${channels.join(', ')}\n`;
+    text += `直近の投稿:\n`;
+    text += recent
+      .map((p: { date: string; channel: string; theme: string }) =>
+        `- ${p.date} [${p.channel}] ${p.theme}`,
+      )
+      .join('\n');
+    return text;
+  } catch {
+    return '読み込みエラー';
+  }
+}
+
 // ===== Gemini API =====
 async function callGemini(prompt: string): Promise<string> {
   if (!GEMINI_API_KEY) throw new Error('GEMINI_API_KEY が未設定');
@@ -221,6 +244,7 @@ function buildPrompt(
   stocks: StockData[],
   pendingTasks: string,
   activeProjects: string,
+  postHistory: string,
 ): string {
   const days = ['日', '月', '火', '水', '木', '金', '土'];
   const dateStr = `${now.getMonth() + 1}/${now.getDate()}(${days[now.getDay()]})`;
@@ -241,6 +265,7 @@ function buildPrompt(
       : '取得できませんでした';
 
   return `あなたは翔太さん（Getabako / if(塾)経営者・フリーランスエンジニア）のAI秘書です。
+30代女性の秘書として、丁寧だが飾りすぎない自然な口調で話してください。特徴的な語尾や過度な敬語は不要です。
 以下のデータから、毎朝のDiscordブリーフィングメッセージを生成してください。
 
 ## 出力フォーマット（厳守）
@@ -251,12 +276,12 @@ function buildPrompt(
 今日:
 （今日のイベントを時刻付きで列挙。なければ「予定なし」）
 今後1週間の注目:
-（重要なものをピックアップ。日付+時刻+内容）
+（重要なものをピックアップ。日付(曜日)+時刻+内容）
 ⚠️ 重複/注意:
 （2アカウントで重複しているイベントや注意点があれば記載。なければ省略）
 
 【2. 株の確認】
-（株式データの要約。全銘柄を列挙せず、注目ポイントだけ簡潔にまとめる。今日の方針を1行で）
+（株式データの要約。全銘柄を列挙せず、注目ポイントだけ簡潔にまとめる。今日の方針を1行で。データなしなら週明けに備える旨を書く）
 
 【3. 開発/運用の確認】
 （進行中のプロジェクトや未完了タスクから、今日意識すべきことを2-3行で）
@@ -264,8 +289,21 @@ function buildPrompt(
 【4. 準備の確認】
 （今後1週間の予定を先読みして、今日のうちにやっておくべき準備を列挙）
 
+【5. 対応の確認】
+（継続案件のフォローや品質管理について。NPO対応、投稿品質チェック、クライアント対応など、放置すると問題になるものを記載）
+
+【6. 広告/情報発信の確認（今日の判断）】
+（if-juku、if-business、Instagram等の投稿方針。直近の投稿履歴を踏まえて、今日投稿すべきか保留かを判断。品質が不安定なら「整える日」にする提案もOK）
+
 【タスク一覧】
 （今日やるべきことを優先順にリスト化。各タスクに推定時間を付ける）
+
+## 優先度の絵文字ルール（厳守）
+- 高優先度: 🔴 （赤丸）
+- 中優先度: 🟡 （黄丸）
+- 低優先度: 🟢 （緑丸）
+タスク一覧では [high] [medium] [low] ではなく、必ず上記の絵文字を使うこと。
+例: 🔴 未踏アドバンスト 書類作成（3h）
 
 ## ルール
 - Discord送信なのでMarkdownは使えないが、**太字**は使える
@@ -273,7 +311,7 @@ function buildPrompt(
 - セクション内でデータがなければ「特になし」と書く
 - 「おはよう！」の1行目は変えない
 - 2アカウントのカレンダーで同じイベントがあれば重複注意を入れる
-- 全体で1500文字以内に収める
+- 全体で1800文字以内に収める
 
 ## 入力データ
 
@@ -291,6 +329,9 @@ ${pendingTasks}
 
 ### 進行中プロジェクト
 ${activeProjects}
+
+### 投稿/情報発信の履歴
+${postHistory}
 `;
 }
 
@@ -360,10 +401,11 @@ async function main() {
   // コンテキスト読み込み
   const pendingTasks = loadPendingTasks();
   const activeProjects = loadActiveProjects();
+  const postHistory = loadPostHistory();
 
   // Gemini でブリーフィング生成
   console.log('🧠 Gemini API でブリーフィング生成中...');
-  const prompt = buildPrompt(now, todayEvents, weekEvents, stocks, pendingTasks, activeProjects);
+  const prompt = buildPrompt(now, todayEvents, weekEvents, stocks, pendingTasks, activeProjects, postHistory);
   const briefing = await callGemini(prompt);
 
   console.log('\n--- 生成結果 ---');
