@@ -691,7 +691,11 @@ async function main() {
   console.log('✅ ブリーフィング送信完了！');
 
   // タスクパネル送信 + ボタン待ち（Bot）
-  await sendTaskPanelAndListen();
+  try {
+    await sendTaskPanelAndListen();
+  } catch (err) {
+    console.error('⚠️ タスクパネル送信失敗（ブリーフィングは送信済み）:', err);
+  }
 }
 
 main().catch(error => {
