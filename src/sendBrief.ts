@@ -530,17 +530,30 @@ async function sendTaskPanelAndListen(): Promise<void> {
   }
 
   const client = new Client({
-    intents: [GatewayIntentBits.Guilds],
+    intents: [GatewayIntentBits.Guilds, GatewayIntentBits.GuildMessages],
   });
 
-  await client.login(BOT_TOKEN);
+  try {
+    await client.login(BOT_TOKEN);
+  } catch (err) {
+    console.error('⚠️ Bot ログイン失敗:', err);
+    return;
+  }
   await new Promise<void>(resolve => client.once(Events.ClientReady, () => resolve()));
   console.log('🤖 Bot ログイン完了');
 
   // タスクパネル送信
-  const channel = await client.channels.fetch(CHANNEL_ID) as TextChannel;
-  if (!channel || !channel.isTextBased()) {
-    console.error('❌ チャンネルが見つかりません');
+  let channel: TextChannel;
+  try {
+    const fetched = await client.channels.fetch(CHANNEL_ID);
+    if (!fetched || !fetched.isTextBased()) {
+      console.error('❌ チャンネルが見つからないか、テキストチャンネルではありません');
+      client.destroy();
+      return;
+    }
+    channel = fetched as TextChannel;
+  } catch (err) {
+    console.error('⚠️ チャンネル取得失敗:', err);
     client.destroy();
     return;
   }
@@ -552,10 +565,17 @@ async function sendTaskPanelAndListen(): Promise<void> {
     `⏰ このパネルは${BOT_LISTEN_MINUTES}分間有効です。`,
   ].join('\n');
 
-  const panelMsg = await channel.send({
-    content: panelText,
-    components: rows,
-  });
+  let panelMsg;
+  try {
+    panelMsg = await channel.send({
+      content: panelText,
+      components: rows,
+    });
+  } catch (err) {
+    console.error('⚠️ タスクパネル送信失敗:', err);
+    client.destroy();
+    return;
+  }
   console.log(`📋 タスクパネル送信: ${pending.length}件`);
 
   // ボタン操作ハンドラ
