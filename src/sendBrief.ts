@@ -350,14 +350,18 @@ function buildPrompt(
 （if-juku、if-business、Instagram等の投稿方針。直近の投稿履歴を踏まえて、今日投稿すべきか保留かを判断。品質が不安定なら「整える日」にする提案もOK）
 
 【タスク一覧】
-（今日やるべきことを優先順にリスト化。各タスクに推定時間を付ける）
+（今日やるべきことを優先順にリスト化。必ず先頭に通し番号を振ること。各タスクに推定時間を付ける）
 
 ## 優先度の絵文字ルール（厳守）
 - 高優先度: 🔴 （赤丸）
 - 中優先度: 🟡 （黄丸）
 - 低優先度: 🟢 （緑丸）
 タスク一覧では [high] [medium] [low] ではなく、必ず上記の絵文字を使うこと。
-例: 🔴 未踏アドバンスト 書類作成（3h）
+必ず通し番号を付けること。
+例:
+1. 🔴 未踏アドバンスト 書類作成（3h）
+2. 🔴 渡辺さん連絡（15m）
+3. 🟡 株式レポート確認（30m）
 
 ## ルール
 - Discord送信なのでMarkdownは使えないが、**太字**は使える
@@ -442,12 +446,13 @@ function saveTaskStates(tasks: TaskState[]): void {
   writeFileSync(TASKS_PATH, JSON.stringify(tasks, null, 2), 'utf-8');
 }
 
-/** 7日以上前のpendingタスクを自動アーカイブ */
+/** 7日以上前のpendingタスクを自動アーカイブ + 重複削除 */
 function cleanupOldTasks(): number {
   const tasks = loadTaskStates();
   const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
   let archived = 0;
 
+  // 7日超過タスクをアーカイブ
   for (const task of tasks) {
     if (
       (task.status === 'pending' || task.status === 'postponed') &&
@@ -460,9 +465,26 @@ function cleanupOldTasks(): number {
     }
   }
 
+  // 重複タスク削除（同名のpendingは最新1件だけ残す）
+  const seen = new Map<string, TaskState>();
+  for (const task of tasks) {
+    if (task.status === 'done') continue;
+    const existing = seen.get(task.summary);
+    if (existing) {
+      const older = new Date(existing.createdAt) < new Date(task.createdAt) ? existing : task;
+      older.status = 'done';
+      older.updatedAt = new Date().toISOString();
+      older.notes = (older.notes || '') + ' [重複削除]';
+      seen.set(task.summary, older === existing ? task : existing);
+      archived++;
+    } else {
+      seen.set(task.summary, task);
+    }
+  }
+
   if (archived > 0) {
     saveTaskStates(tasks);
-    console.log(`🗑️ ${archived}件の古いタスクを自動アーカイブしました`);
+    console.log(`🗑️ ${archived}件のタスクをクリーンアップしました`);
   }
   return archived;
 }

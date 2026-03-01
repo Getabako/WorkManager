@@ -183,11 +183,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-18T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-18T08:00:27.388842",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260218-routine-02",
@@ -196,11 +197,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-18T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-18T08:00:27.388842",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260218-routine-03",
@@ -209,11 +211,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-18T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-18T08:00:27.388842",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260218-cal-01",
@@ -222,11 +225,12 @@
     "category": "other",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-18T06:30:00+09:00",
     "estimatedMinutes": 60,
     "createdAt": "2026-02-18T08:00:27.388842",
-    "notes": "水曜ライブ配信"
+    "notes": "水曜ライブ配信 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260218-cal-02",
@@ -248,11 +252,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-19T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-19T08:01:32.191400+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260219-routine-02",
@@ -261,11 +266,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-19T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-19T08:01:32.191400+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260219-routine-03",
@@ -274,11 +280,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-19T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-19T08:01:32.191400+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260219-cal-01",
@@ -300,11 +307,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "high",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-19T16:00:00+09:00",
     "estimatedMinutes": 60,
     "createdAt": "2026-02-19T08:01:32.191400+09:00",
-    "notes": "カレンダー予定"
+    "notes": "カレンダー予定 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260219-cal-03",
@@ -326,11 +334,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-20T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-20T09:45:08.825573",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260220-routine-02",
@@ -339,11 +348,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-20T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-20T09:45:08.825577",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260220-routine-03",
@@ -352,11 +362,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-20T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-20T09:45:08.825579",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260220-cal-01",
@@ -391,11 +402,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-21T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-21T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260221-routine-02",
@@ -404,11 +416,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-21T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-21T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260221-routine-03",
@@ -417,11 +430,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-21T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-21T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260221-cal-01",
@@ -430,11 +444,12 @@
     "category": "other",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-22T10:00:00+09:00",
     "estimatedMinutes": 60,
     "createdAt": "2026-02-21T08:00:00+09:00",
-    "notes": "明日の予定"
+    "notes": "明日の予定 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260221-cal-02",
@@ -443,11 +458,12 @@
     "category": "other",
     "type": "action",
     "priority": "high",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-23T17:00:00+09:00",
     "estimatedMinutes": 120,
     "createdAt": "2026-02-21T08:00:00+09:00",
-    "notes": "日曜。琢己と配置・メンバー確認必要"
+    "notes": "日曜。琢己と配置・メンバー確認必要 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260222-routine-01",
@@ -456,11 +472,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-22T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-22T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260222-routine-02",
@@ -469,11 +486,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-22T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-22T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260222-routine-03",
@@ -482,11 +500,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-22T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-22T08:00:00+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260222-cal-01",
@@ -508,11 +527,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-23T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-23T08:15:51.554191+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260223-routine-02",
@@ -521,11 +541,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-23T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-23T08:15:51.554191+09:00",
-    "notes": "定常業務"
+    "notes": "定常業務 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260223-routine-03",
@@ -534,11 +555,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-23T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-23T08:15:51.554191+09:00",
-    "notes": "定常業務。月曜なので週次売買判断も含む"
+    "notes": "定常業務。月曜なので週次売買判断も含む [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260223-routine-04",
@@ -560,11 +582,12 @@
     "category": "other",
     "type": "action",
     "priority": "high",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-23T17:00:00+09:00",
     "estimatedMinutes": 120,
     "createdAt": "2026-02-23T08:15:51.554191+09:00",
-    "notes": "琢己と配置・メンバー確認必要。授業1時間前（16:00）にリマインド設定"
+    "notes": "琢己と配置・メンバー確認必要。授業1時間前（16:00）にリマインド設定 [重複削除]",
+    "updatedAt": "2026-03-01T03:11:05.416Z"
   },
   {
     "id": "20260224-routine-01",
@@ -573,12 +596,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-24T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-24T08:00:00+09:00",
-    "updatedAt": "2026-02-24T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260224-routine-02",
@@ -587,12 +610,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-24T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-24T08:00:00+09:00",
-    "updatedAt": "2026-02-24T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260224-routine-03",
@@ -601,12 +624,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-24T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-24T08:00:00+09:00",
-    "updatedAt": "2026-02-24T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260224-special-01",
@@ -615,12 +638,12 @@
     "category": "admin",
     "type": "action",
     "priority": "high",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-24T20:00:00+09:00",
     "estimatedMinutes": 45,
     "createdAt": "2026-02-24T08:00:00+09:00",
-    "updatedAt": "2026-02-24T08:00:00+09:00",
-    "notes": "月収50万チェック仕組み用"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "月収50万チェック仕組み用 [重複削除]"
   },
   {
     "id": "20260224-special-02",
@@ -629,12 +652,12 @@
     "category": "admin",
     "type": "confirm",
     "priority": "high",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-24T20:30:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-24T08:00:00+09:00",
-    "updatedAt": "2026-02-24T08:00:00+09:00",
-    "notes": "HEARTBEAT.md指示"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "HEARTBEAT.md指示 [重複削除]"
   },
   {
     "id": "20260225-cal-01",
@@ -699,12 +722,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-26T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-26T08:00:00+09:00",
-    "updatedAt": "2026-02-26T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260226-routine-02",
@@ -713,12 +736,12 @@
     "category": "communication",
     "type": "confirm",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-26T12:00:00+09:00",
     "estimatedMinutes": 15,
     "createdAt": "2026-02-26T08:00:00+09:00",
-    "updatedAt": "2026-02-26T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260226-routine-03",
@@ -727,12 +750,12 @@
     "category": "stock",
     "type": "action",
     "priority": "medium",
-    "status": "pending",
+    "status": "done",
     "deadline": "2026-02-26T18:00:00+09:00",
     "estimatedMinutes": 30,
     "createdAt": "2026-02-26T08:00:00+09:00",
-    "updatedAt": "2026-02-26T08:00:00+09:00",
-    "notes": "定常業務"
+    "updatedAt": "2026-03-01T03:11:05.416Z",
+    "notes": "定常業務 [重複削除]"
   },
   {
     "id": "20260301-cal-01",
