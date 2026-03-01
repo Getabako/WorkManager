@@ -2,12 +2,21 @@
 
 import { google } from 'googleapis';
 import { OAuth2Client } from 'google-auth-library';
-import { readFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync } from 'fs';
 import { resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 import yahooFinance from 'yahoo-finance2';
+import {
+  Client,
+  GatewayIntentBits,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  Events,
+  type TextChannel,
+} from 'discord.js';
 import dotenv from 'dotenv';
-import type { CalendarEvent, StockData } from './types.js';
+import type { CalendarEvent, StockData, TaskState } from './types.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -16,10 +25,13 @@ dotenv.config({ path: resolve(__dirname, '..', '.env') });
 // ===== 設定 =====
 const WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL;
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+const BOT_TOKEN = process.env.DISCORD_BOT_TOKEN;
+const CHANNEL_ID = process.env.SECRETARY_CHANNEL_ID;
 const TOKEN_PATH = resolve(__dirname, '..', 'calendar_token.json');
 const TOKEN_PATH_SECONDARY = resolve(__dirname, '..', 'calendar_token_secondary.json');
 const TASKS_PATH = resolve(__dirname, '..', 'tasks.json');
 const PROJECTS_PATH = resolve(__dirname, '..', 'projects.json');
+const BOT_LISTEN_MINUTES = parseInt(process.env.BOT_LISTEN_MINUTES || '10', 10);
 
 const DEFAULT_SYMBOLS = ['NVDA', 'MSFT', 'GOOGL', 'META', 'AMZN', 'AMD', 'SMCI', 'ARM', 'PLTR', 'TSM'];
 
@@ -416,9 +428,228 @@ function splitMessage(text: string, maxLen: number): string[] {
   return chunks;
 }
 
+// ===== タスク管理 =====
+function loadTaskStates(): TaskState[] {
+  if (!existsSync(TASKS_PATH)) return [];
+  try {
+    return JSON.parse(readFileSync(TASKS_PATH, 'utf-8')) as TaskState[];
+  } catch {
+    return [];
+  }
+}
+
+function saveTaskStates(tasks: TaskState[]): void {
+  writeFileSync(TASKS_PATH, JSON.stringify(tasks, null, 2), 'utf-8');
+}
+
+/** 7日以上前のpendingタスクを自動アーカイブ */
+function cleanupOldTasks(): number {
+  const tasks = loadTaskStates();
+  const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+  let archived = 0;
+
+  for (const task of tasks) {
+    if (
+      (task.status === 'pending' || task.status === 'postponed') &&
+      new Date(task.createdAt).getTime() < cutoff
+    ) {
+      task.status = 'done';
+      task.updatedAt = new Date().toISOString();
+      task.notes = (task.notes || '') + ' [7日経過で自動アーカイブ]';
+      archived++;
+    }
+  }
+
+  if (archived > 0) {
+    saveTaskStates(tasks);
+    console.log(`🗑️ ${archived}件の古いタスクを自動アーカイブしました`);
+  }
+  return archived;
+}
+
+/** pendingタスクを取得（ボタン用） */
+function getPendingTaskStates(): TaskState[] {
+  const tasks = loadTaskStates();
+  return tasks.filter(t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'postponed');
+}
+
+/** タスク名を短縮（ボタンラベル用、最大40文字） */
+function truncateLabel(text: string, max = 40): string {
+  if (text.length <= max) return text;
+  return text.slice(0, max - 1) + '…';
+}
+
+/** タスク完了ボタンのActionRowを生成（5個ずつ） */
+function buildTaskButtonRows(tasks: TaskState[]): ActionRowBuilder<ButtonBuilder>[] {
+  const rows: ActionRowBuilder<ButtonBuilder>[] = [];
+  // 最大20タスク（4行 × 5ボタン）+ 1行（一括ボタン）
+  const showTasks = tasks.slice(0, 20);
+
+  for (let i = 0; i < showTasks.length; i += 5) {
+    const row = new ActionRowBuilder<ButtonBuilder>();
+    const chunk = showTasks.slice(i, i + 5);
+    for (const task of chunk) {
+      row.addComponents(
+        new ButtonBuilder()
+          .setCustomId(`done_${task.id}`)
+          .setLabel(truncateLabel(task.summary))
+          .setStyle(ButtonStyle.Success)
+          .setEmoji('✅'),
+      );
+    }
+    rows.push(row);
+  }
+
+  // 一括操作ボタン行（最大5行なので残り枠があれば追加）
+  if (rows.length < 5) {
+    const utilRow = new ActionRowBuilder<ButtonBuilder>();
+    utilRow.addComponents(
+      new ButtonBuilder()
+        .setCustomId('done_all_visible')
+        .setLabel('全て完了')
+        .setStyle(ButtonStyle.Danger)
+        .setEmoji('🗑️'),
+    );
+    rows.push(utilRow);
+  }
+
+  return rows;
+}
+
+/** Bot でタスク管理パネルを送信し、ボタン操作を待つ */
+async function sendTaskPanelAndListen(): Promise<void> {
+  if (!BOT_TOKEN || !CHANNEL_ID) {
+    console.log('⏭️ BOT_TOKEN または CHANNEL_ID 未設定のため、タスクパネルをスキップ');
+    return;
+  }
+
+  const pending = getPendingTaskStates();
+  if (pending.length === 0) {
+    console.log('📋 未完了タスクなし。パネルスキップ');
+    return;
+  }
+
+  const client = new Client({
+    intents: [GatewayIntentBits.Guilds],
+  });
+
+  await client.login(BOT_TOKEN);
+  await new Promise<void>(resolve => client.once(Events.ClientReady, () => resolve()));
+  console.log('🤖 Bot ログイン完了');
+
+  // タスクパネル送信
+  const channel = await client.channels.fetch(CHANNEL_ID) as TextChannel;
+  if (!channel || !channel.isTextBased()) {
+    console.error('❌ チャンネルが見つかりません');
+    client.destroy();
+    return;
+  }
+
+  const rows = buildTaskButtonRows(pending);
+  const panelText = [
+    `📋 **タスク管理パネル** (${pending.length}件)`,
+    `完了したタスクのボタンを押してください。`,
+    `⏰ このパネルは${BOT_LISTEN_MINUTES}分間有効です。`,
+  ].join('\n');
+
+  const panelMsg = await channel.send({
+    content: panelText,
+    components: rows,
+  });
+  console.log(`📋 タスクパネル送信: ${pending.length}件`);
+
+  // ボタン操作ハンドラ
+  client.on(Events.InteractionCreate, async (interaction) => {
+    if (!interaction.isButton()) return;
+
+    const customId = interaction.customId;
+
+    if (customId === 'done_all_visible') {
+      // 全て完了
+      const tasks = loadTaskStates();
+      let count = 0;
+      for (const task of tasks) {
+        if (task.status === 'pending' || task.status === 'in_progress' || task.status === 'postponed') {
+          task.status = 'done';
+          task.updatedAt = new Date().toISOString();
+          count++;
+        }
+      }
+      saveTaskStates(tasks);
+
+      await interaction.update({
+        content: `🗑️ **${count}件のタスクを全て完了にしました！**\nおつかれさまでした！`,
+        components: [],
+      });
+      console.log(`✅ 全タスク完了: ${count}件`);
+      return;
+    }
+
+    if (customId.startsWith('done_')) {
+      const taskId = customId.slice(5);
+      const tasks = loadTaskStates();
+      const task = tasks.find(t => t.id === taskId);
+
+      if (task) {
+        task.status = 'done';
+        task.updatedAt = new Date().toISOString();
+        saveTaskStates(tasks);
+
+        // 残りのpendingタスクでパネルを更新
+        const remaining = tasks.filter(
+          t => t.status === 'pending' || t.status === 'in_progress' || t.status === 'postponed',
+        );
+
+        if (remaining.length === 0) {
+          await interaction.update({
+            content: `✅ **全タスク完了！** おつかれさまでした！`,
+            components: [],
+          });
+        } else {
+          const newRows = buildTaskButtonRows(remaining);
+          await interaction.update({
+            content: [
+              `✅ **${task.summary}** 完了！`,
+              ``,
+              `📋 **残り${remaining.length}件**`,
+            ].join('\n'),
+            components: newRows,
+          });
+        }
+        console.log(`✅ タスク完了: ${task.summary}`);
+      } else {
+        await interaction.reply({ content: '⚠️ タスクが見つかりませんでした', ephemeral: true });
+      }
+    }
+  });
+
+  // タイムアウト後に終了
+  console.log(`⏰ ${BOT_LISTEN_MINUTES}分間ボタン操作を待ちます...`);
+  await new Promise(resolve => setTimeout(resolve, BOT_LISTEN_MINUTES * 60 * 1000));
+
+  // パネルを更新して終了を通知
+  try {
+    const remaining = getPendingTaskStates();
+    await panelMsg.edit({
+      content: remaining.length > 0
+        ? `📋 パネルの受付は終了しました。残り${remaining.length}件は明日のブリーフィングで再表示します。`
+        : `✅ 全タスク完了！`,
+      components: [],
+    });
+  } catch {
+    // メッセージ編集失敗は無視
+  }
+
+  client.destroy();
+  console.log('🤖 Bot 切断');
+}
+
 // ===== メイン =====
 async function main() {
   console.log('🤖 ブリーフィング生成開始...');
+
+  // 古いタスクを自動アーカイブ
+  cleanupOldTasks();
 
   const now = new Date();
   const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -454,11 +685,13 @@ async function main() {
   console.log(briefing);
   console.log('--- ここまで ---\n');
 
-  // Discord 送信
-  console.log('📤 Discord に送信中...');
+  // ブリーフィング送信（Webhook）
+  console.log('📤 ブリーフィングを送信中...');
   await sendWebhook(briefing);
-
   console.log('✅ ブリーフィング送信完了！');
+
+  // タスクパネル送信 + ボタン待ち（Bot）
+  await sendTaskPanelAndListen();
 }
 
 main().catch(error => {

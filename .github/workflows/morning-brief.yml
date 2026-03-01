@@ -9,7 +9,7 @@ on:
 jobs:
   send-briefing:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v4
@@ -27,12 +27,15 @@ jobs:
           echo '${{ secrets.CALENDAR_TOKEN_JSON }}' > calendar_token.json
           echo '${{ secrets.CALENDAR_TOKEN_SECONDARY_JSON }}' > calendar_token_secondary.json
 
-      - name: Send morning briefing
+      - name: Send morning briefing + task panel
         run: npx tsx src/sendBrief.ts
         env:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           GOOGLE_CLIENT_SECRET: ${{ secrets.GOOGLE_CLIENT_SECRET }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          SECRETARY_CHANNEL_ID: ${{ secrets.SECRETARY_CHANNEL_ID }}
           STOCK_SYMBOLS: ${{ vars.STOCK_SYMBOLS || 'NVDA,MSFT,GOOGL,META,AMZN,AMD,SMCI,ARM,PLTR,TSM' }}
+          BOT_LISTEN_MINUTES: '10'
           TZ: Asia/Tokyo
