@@ -4,11 +4,8 @@
   "description": "AI秘書 - 毎朝のブリーフィング & 株式分析レポート",
   "type": "module",
   "scripts": {
-    "brief": "tsx src/morningBrief.ts",
     "send-brief": "tsx src/sendBrief.ts",
-    "stock": "tsx src/stockReport.ts",
-    "setup-calendar": "tsx scripts/setup-calendar.ts",
-    "bot": "tsx src/bot.ts"
+    "setup-calendar": "tsx scripts/setup-calendar.ts"
   },
   "dependencies": {
     "discord.js": "^14.16.0",
