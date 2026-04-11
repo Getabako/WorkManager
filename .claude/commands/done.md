@@ -6,7 +6,7 @@
 ## 実行手順
 
 1. `tasks.json` を読み込む
-2. status が `pending`, `in_progress`, `postponed` のタスクだけ抽出して番号を振る（1始まり）
+2. status が `pending`, `in_progress` のタスクだけ抽出して番号を振る（1始まり）。このフィルタ条件はブリーフィングの `loadPendingTasks()` と同じなので、番号が一致する。
 3. 引数で指定された番号のタスクの status を `done` に、updatedAt を現在時刻に更新する
 4. `tasks.json` を保存する
 5. 完了したタスク名を一覧表示する

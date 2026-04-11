@@ -193,10 +193,13 @@ function loadPendingTasks(): string {
       (t: { status: string }) => t.status === 'pending' || t.status === 'in_progress',
     );
     if (pending.length === 0) return 'なし';
+    // 番号を振って返す（この番号がブリーフィングと/doneコマンドで共通）
     return pending
-      .map((t: { summary: string; status: string; priority: string; notes?: string }) =>
-        `- [${t.priority}] ${t.summary} (${t.status})${t.notes ? ` ※${t.notes}` : ''}`,
-      )
+      .map((t: { summary: string; status: string; priority: string; notes?: string; deadline?: string; createdAt?: string }, i: number) => {
+        const deadline = t.deadline ? ` 期限:${t.deadline}` : '';
+        const created = t.createdAt ? ` 作成:${t.createdAt}` : '';
+        return `${i + 1}. [${t.priority}] ${t.summary} (${t.status})${deadline}${created}${t.notes ? ` ※${t.notes}` : ''}`;
+      })
       .join('\n');
   } catch {
     return '読み込みエラー';
@@ -350,18 +353,18 @@ function buildPrompt(
 （if-juku、if-business、Instagram等の投稿方針。直近の投稿履歴を踏まえて、今日投稿すべきか保留かを判断。品質が不安定なら「整える日」にする提案もOK）
 
 【タスク一覧】
-（今日やるべきことを優先順にリスト化。必ず先頭に通し番号を振ること。各タスクに推定時間を付ける）
+（未完了タスクのデータに振られている番号をそのまま使うこと。番号を並べ替えたり振り直したりしてはいけない。各タスクに推定時間を付ける。今日やるべきものだけピックアップしてもよいが、番号は元データの番号を維持すること）
 
 ## 優先度の絵文字ルール（厳守）
 - 高優先度: 🔴 （赤丸）
 - 中優先度: 🟡 （黄丸）
 - 低優先度: 🟢 （緑丸）
 タスク一覧では [high] [medium] [low] ではなく、必ず上記の絵文字を使うこと。
-必ず通し番号を付けること。
-例:
-1. 🔴 未踏アドバンスト 書類作成（3h）
-2. 🔴 渡辺さん連絡（15m）
-3. 🟡 株式レポート確認（30m）
+番号はデータの番号をそのまま使うこと（重要: ユーザーはこの番号でタスクを完了にするため、変更すると不整合が起きる）。
+例（元データに 3. [high] 未踏アドバンスト書類作成 があった場合）:
+3. 🔴 未踏アドバンスト 書類作成（3h）
+7. 🔴 渡辺さん連絡（15m）
+12. 🟡 株式レポート確認（30m）
 
 ## ルール
 - Discord送信なのでMarkdownは使えないが、**太字**は使える
@@ -370,6 +373,12 @@ function buildPrompt(
 - 「おはよう！」の1行目は変えない
 - 2アカウントのカレンダーで同じイベントがあれば重複注意を入れる
 - 全体で1800文字以内に収める
+
+## スケジュール管理の絶対ルール（最重要・違反厳禁）
+- タスクのsummaryに「本日」「明日」「今週」などの相対的な日付表現が含まれていても**絶対に信用するな**。必ず deadline や createdAt の実際の日付と今日の日付（${dateStr}）を照合して判断すること。
+- 例: summary が「○○（本日）」でも createdAt が5日前なら、それは5日前のタスクであり今日の予定ではない。
+- 過去の予定を「今日の予定」として表示するのは絶対にNG。カレンダーデータの日付を正とすること。
+- 日付を間違えることはスケジュール秘書として致命的なミス。必ず日付を二重チェックすること。
 
 ## 入力データ
 
