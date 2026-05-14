@@ -16,7 +16,9 @@ import {
   type TextChannel,
 } from 'discord.js';
 import dotenv from 'dotenv';
-import type { CalendarEvent, StockData, TaskState } from './types.js';
+import type { CalendarEvent, StockData, TaskState, HealthData } from './types.js';
+import { getYesterdaySummary, getEntries } from './autopilot-history.js';
+import { withMonitor, notifyFailure } from './run-monitor.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -34,6 +36,53 @@ const PROJECTS_PATH = resolve(__dirname, '..', 'projects.json');
 const BOT_LISTEN_MINUTES = parseInt(process.env.BOT_LISTEN_MINUTES || '10', 10);
 
 const DEFAULT_SYMBOLS = ['NVDA', 'MSFT', 'GOOGL', 'META', 'AMZN', 'AMD', 'SMCI', 'ARM', 'PLTR', 'TSM'];
+
+const RING_API_URL = process.env.RING_API_URL || 'https://my-ring-app.vercel.app/api/dashboard';
+
+// ===== ヘルスデータ（Ultrahuman Ring） =====
+async function fetchHealthData(): Promise<HealthData | null> {
+  try {
+    const resp = await fetch(RING_API_URL, { signal: AbortSignal.timeout(10000) });
+    if (!resp.ok) {
+      console.error(`⚠️ リングデータ取得失敗: ${resp.status}`);
+      return null;
+    }
+    const data = await resp.json();
+    if (data.error) {
+      console.error(`⚠️ リングデータエラー: ${data.error}`);
+      return null;
+    }
+    return data as HealthData;
+  } catch (err) {
+    console.error('⚠️ リングデータ取得失敗:', err);
+    return null;
+  }
+}
+
+function formatHealthForPrompt(health: HealthData): string {
+  const s = health.sleep;
+  const m = health.movement;
+  const r = health.recovery;
+
+  const sleepHM = `${s.totalHours}時間${s.remainingMinutes}分`;
+  const sleepDebtStr = s.sleepDebt >= 0
+    ? `+${s.sleepDebt}分（貯金あり）`
+    : `${s.sleepDebt}分（負債あり）`;
+
+  return [
+    `【睡眠】`,
+    `  合計: ${sleepHM} / スコア: ${s.score} / 効率: ${s.efficiency}%`,
+    `  深い睡眠: ${s.deepSleepMinutes}分 / REM: ${s.remSleepMinutes}分 / 浅い睡眠: ${s.lightSleepMinutes}分`,
+    `  就寝: ${s.bedtimeStart} → 起床: ${s.bedtimeEnd}`,
+    `  睡眠負債（目標7.5h比）: ${sleepDebtStr}`,
+    `【運動】`,
+    `  歩数: ${m.steps.toLocaleString()} / 目標: ${m.stepsGoal.toLocaleString()} / ムーブメントインデックス: ${m.movementIndex}`,
+    `【回復】`,
+    `  回復インデックス: ${r.recoveryIndex} / HRV: ${r.hrv}ms / 安静時心拍: ${r.restingHeartRate}bpm`,
+    `【体温】`,
+    `  平均: ${health.temperature.average}℃`,
+  ].join('\n');
+}
 
 // ===== カレンダー =====
 /** refresh_token から新しい access_token を取得 */
@@ -225,26 +274,55 @@ function loadActiveProjects(): string {
   }
 }
 
-const POST_HISTORY_PATH = resolve(__dirname, '..', 'content_post_history.json');
-
 function loadPostHistory(): string {
-  if (!existsSync(POST_HISTORY_PATH)) return 'なし';
+  // 実態に即した情報源: autopilot-history.json（毎日 morning/noon/evening スロットで
+  // YouTube Shorts + note を自動投稿している実績ログ）。
+  // 古い content_post_history.json は手動更新が止まっており信用しない。
   try {
-    const data = JSON.parse(readFileSync(POST_HISTORY_PATH, 'utf-8'));
-    const posts = data.posts || [];
-    if (posts.length === 0) return 'なし';
-    const channels = data.rules?.channels || [];
-    const recent = posts.slice(0, 10);
-    let text = `配信チャンネル: ${channels.join(', ')}\n`;
-    text += `直近の投稿:\n`;
-    text += recent
-      .map((p: { date: string; channel: string; theme: string }) =>
-        `- ${p.date} [${p.channel}] ${p.theme}`,
-      )
-      .join('\n');
-    return text;
-  } catch {
-    return '読み込みエラー';
+    const entries = getEntries(14); // 過去14日分
+    if (entries.length === 0) return 'なし（直近14日に自動投稿実績なし）';
+
+    // 日付降順で並べる
+    const sorted = [...entries].sort((a, b) => {
+      if (a.date !== b.date) return a.date < b.date ? 1 : -1;
+      return (b.createdAt || '').localeCompare(a.createdAt || '');
+    });
+
+    // 集計: 成功/失敗カウント
+    const videos = sorted.filter(e => e.type === 'video');
+    const notes = sorted.filter(e => e.type === 'note');
+    const diaries = sorted.filter(e => e.type === 'diary');
+    const summary = [
+      `配信チャンネル（実態）: YouTube Shorts（動画）+ note（記事）。Instagram/blog の自動投稿は停止中。`,
+      `直近14日の自動投稿実績:`,
+      `  🎬 動画: ${videos.filter(e => e.passed).length}/${videos.length}件成功`,
+      `  📝 note: ${notes.filter(e => e.passed).length}/${notes.length}件成功`,
+      `  📓 日記: ${diaries.filter(e => e.passed).length}/${diaries.length}件成功`,
+    ];
+
+    // 直近の投稿（最大15件）
+    const recent = sorted.slice(0, 15);
+    const list = recent.map(e => {
+      const status = e.passed ? '✅' : '❌';
+      const url = e.url ? ` ${e.url}` : '';
+      const err = !e.passed && e.error ? ` ※${e.error}` : '';
+      return `- ${e.date} [${e.slot}/${e.type}] ${status} ${e.title}${url}${err}`;
+    });
+
+    // 直近で連続失敗しているものを警告
+    const failuresLast3Days = sorted.filter(e => {
+      const cutoff = new Date();
+      cutoff.setDate(cutoff.getDate() - 3);
+      return e.date >= cutoff.toISOString().slice(0, 10) && !e.passed;
+    });
+    let warn = '';
+    if (failuresLast3Days.length >= 2) {
+      warn = `\n⚠️ 直近3日で${failuresLast3Days.length}件失敗あり（要対処）`;
+    }
+
+    return summary.join('\n') + '\n\n' + list.join('\n') + warn;
+  } catch (e) {
+    return `読み込みエラー: ${e}`;
   }
 }
 
@@ -302,6 +380,8 @@ function buildPrompt(
   pendingTasks: string,
   activeProjects: string,
   postHistory: string,
+  autopilotSummary: string,
+  healthData: HealthData | null,
 ): string {
   const days = ['日', '月', '火', '水', '木', '金', '土'];
   const dateStr = `${now.getMonth() + 1}/${now.getDate()}(${days[now.getDay()]})`;
@@ -329,7 +409,10 @@ function buildPrompt(
 
 おはよう！${dateStr}
 
-【1. 予定の確認】
+【1. 健康の確認】
+（リングデータから睡眠・運動・回復の状態を簡潔にまとめる。データがあれば具体的なアドバイスを1-2行で。睡眠負債が溜まっていれば警告。回復インデックスが低ければ無理しない提案。歩数が目標未達なら散歩の提案。データなしなら「リングデータ取得できず」と書く）
+
+【2. 予定の確認】
 今日:
 （今日のイベントを時刻付きで列挙。なければ「予定なし」）
 今後1週間の注目:
@@ -337,20 +420,27 @@ function buildPrompt(
 ⚠️ 重複/注意:
 （2アカウントで重複しているイベントや注意点があれば記載。なければ省略）
 
-【2. 株の確認】
+【3. 株の確認】
 （株式データの要約。全銘柄を列挙せず、注目ポイントだけ簡潔にまとめる。今日の方針を1行で。データなしなら週明けに備える旨を書く）
 
-【3. 開発/運用の確認】
+【4. 開発/運用の確認】
 （進行中のプロジェクトや未完了タスクから、今日意識すべきことを2-3行で）
 
-【4. 準備の確認】
+【5. 準備の確認】
 （今後1週間の予定を先読みして、今日のうちにやっておくべき準備を列挙）
 
-【5. 対応の確認】
+【6. 対応の確認】
 （継続案件のフォローや品質管理について。NPO対応、投稿品質チェック、クライアント対応など、放置すると問題になるものを記載）
 
-【6. 広告/情報発信の確認（今日の判断）】
-（if-juku、if-business、Instagram等の投稿方針。直近の投稿履歴を踏まえて、今日投稿すべきか保留かを判断。品質が不安定なら「整える日」にする提案もOK）
+【7. 情報発信の確認（自動投稿の状況と今日の方針）】
+（現在の情報発信は YouTube Shorts と note の毎日3スロット自動投稿（朝07:00/昼11:00/夜17:00）に統一されている。Instagram/blog の手動投稿は停止中。
+入力データ「投稿/情報発信の履歴」を必ず読み、直近の自動投稿のテーマ・成功/失敗・URL を簡潔にまとめる。
+失敗があれば何が落ちたか（動画/note/日記のどれが、何件、どんなエラーか）を明示する。
+直近14日のテーマを踏まえて、今日のテーマ提案を1-2案だす。直近14日内に似たテーマがあれば重複として避ける。
+古い手動投稿チャンネル名（if-juku-blog / if-business-blog / instagram-ifjuku 等）を「直近の投稿先」として書かない。実データに無い投稿を捏造しない。）
+
+【8. 自動投稿結果（前日）】
+（前日の自動投稿結果があれば要約。動画・note・日記の成功/失敗件数と、特筆すべき問題があれば記載。データがなければ「自動投稿なし」と記載）
 
 【タスク一覧】
 （未完了タスクのデータに振られている番号をそのまま使うこと。番号を並べ替えたり振り直したりしてはいけない。各タスクに推定時間を付ける。今日やるべきものだけピックアップしてもよいが、番号は元データの番号を維持すること）
@@ -399,6 +489,12 @@ ${activeProjects}
 
 ### 投稿/情報発信の履歴
 ${postHistory}
+
+### 前日の自動投稿結果
+${autopilotSummary}
+
+### ヘルスデータ（Ultrahuman Ring）
+${healthData ? formatHealthForPrompt(healthData) : 'リングデータ取得できず'}
 `;
 }
 
@@ -696,7 +792,7 @@ async function sendTaskPanelAndListen(): Promise<void> {
 }
 
 // ===== メイン =====
-async function main() {
+async function mainImpl() {
   console.log('🤖 ブリーフィング生成開始...');
 
   // 古いタスクを自動アーカイブ
@@ -709,27 +805,30 @@ async function main() {
 
   // データ収集（並列）
   console.log('📅 カレンダー・株式データ取得中...');
-  const [todayEvents, weekEvents, stocks] = await Promise.all([
+  const [todayEvents, weekEvents, stocks, healthData] = await Promise.all([
     getAllEvents(startOfDay, endOfDay),
     getAllEvents(endOfDay, oneWeekLater),
     fetchAllStocks().catch(err => {
       console.error('⚠️ 株式データ取得失敗:', err);
       return [] as StockData[];
     }),
+    fetchHealthData(),
   ]);
 
   console.log(`  今日の予定: ${todayEvents.length}件`);
   console.log(`  今週の予定: ${weekEvents.length}件`);
   console.log(`  株式銘柄: ${stocks.length}件`);
+  console.log(`  ヘルスデータ: ${healthData ? '✓' : '✗'}`);
 
   // コンテキスト読み込み
   const pendingTasks = loadPendingTasks();
   const activeProjects = loadActiveProjects();
   const postHistory = loadPostHistory();
+  const autopilotSummary = getYesterdaySummary();
 
   // Gemini でブリーフィング生成
   console.log('🧠 Gemini API でブリーフィング生成中...');
-  const prompt = buildPrompt(now, todayEvents, weekEvents, stocks, pendingTasks, activeProjects, postHistory);
+  const prompt = buildPrompt(now, todayEvents, weekEvents, stocks, pendingTasks, activeProjects, postHistory, autopilotSummary, healthData);
   const briefing = await callGemini(prompt);
 
   console.log('\n--- 生成結果 ---');
@@ -749,7 +848,13 @@ async function main() {
   }
 }
 
-main().catch(error => {
+async function main() {
+  return withMonitor('morning-brief', mainImpl);
+}
+
+main().catch(async error => {
   console.error('❌ エラー:', error);
+  // withMonitor 内で通知済みのはずだが、import 失敗等の保険
+  try { await notifyFailure('morning-brief', error, 'sendBrief main() catch'); } catch { /* noop */ }
   process.exit(1);
 });
